@@ -1,6 +1,5 @@
 package com.crazyma.exoplayersample
 
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +14,8 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.CustomViewHolder>() {
 
     override fun getItemViewType(position: Int) =
         when (position) {
-            4 -> TYPE_NORMAL
-            else -> TYPE_VIDEO
+            4 -> TYPE_VIDEO
+            else -> TYPE_NORMAL
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
@@ -35,26 +34,14 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.CustomViewHolder>() {
     override fun getItemCount() = 20
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-
+        when(getItemViewType(position)){
+            TYPE_VIDEO -> {
+                (holder as VideoViewHolder).bind()
+            }
+        }
     }
 
     open class CustomViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-    class NormalViewHolder(view: View) : CustomViewHolder(view) {
-        companion object {
-            fun create(parent: ViewGroup) =
-                NormalViewHolder(
-                    LayoutInflater.from(parent.context).inflate(R.layout.item_normal, parent, false)
-                )
-        }
-    }
 
-    class VideoViewHolder(view: View) : CustomViewHolder(view) {
-        companion object {
-            fun create(parent: ViewGroup) =
-                VideoViewHolder(
-                    LayoutInflater.from(parent.context).inflate(R.layout.item_normal, parent, false)
-                )
-        }
-    }
 }
