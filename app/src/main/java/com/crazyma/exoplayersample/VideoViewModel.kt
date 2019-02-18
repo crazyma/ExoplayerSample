@@ -34,11 +34,11 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
                 tag = simpleExoPlayer
             }else {
                 simpleExoPlayer = tag as SimpleExoPlayer
-                simpleExoPlayer.seekTo(0)
+                simpleExoPlayer.seekTo(24608)
             }
 
             setOnClickListener {
-                Log.d("badu","XDD | ")
+                Log.d("badu","current position: ${simpleExoPlayer.currentPosition}")
                 val textureView = this.videoSurfaceView as TextureView
                 callback.invoke(textureView.bitmap)
             }
