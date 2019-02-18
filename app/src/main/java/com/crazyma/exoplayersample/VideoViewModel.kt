@@ -1,7 +1,10 @@
 package com.crazyma.exoplayersample
 
+import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.exoplayer2.ExoPlayerFactory
@@ -21,7 +24,7 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
         }
     }
 
-    fun bind(){
+    fun bind(callback:(Bitmap?) -> Unit){
         itemView.playerView.apply {
             var simpleExoPlayer: SimpleExoPlayer
             if(tag == null) {
@@ -32,6 +35,12 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
             }else {
                 simpleExoPlayer = tag as SimpleExoPlayer
                 simpleExoPlayer.seekTo(0)
+            }
+
+            setOnClickListener {
+                Log.d("badu","XDD | ")
+                val textureView = this.videoSurfaceView as TextureView
+                callback.invoke(textureView.bitmap)
             }
         }
     }

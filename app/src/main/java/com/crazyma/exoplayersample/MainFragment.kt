@@ -22,7 +22,13 @@ class MainFragment: Fragment() {
     private fun setupRecyclerView(){
         recyclerView.apply {
             layoutManager = LinearLayoutManager(context!!)
-            adapter = MainAdapter()
+            adapter = MainAdapter().apply {
+                callback = {
+                    it?.apply {
+                        imageView.setImageBitmap(this)
+                    }
+                }
+            }
         }
     }
 

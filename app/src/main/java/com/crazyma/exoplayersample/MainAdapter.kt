@@ -1,5 +1,6 @@
 package com.crazyma.exoplayersample
 
+import android.graphics.Bitmap
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,8 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.CustomViewHolder>() {
         const val TYPE_NORMAL = 1
         const val TYPE_VIDEO = 2
     }
+
+    lateinit var callback: (Bitmap?) -> Unit
 
     override fun getItemViewType(position: Int) =
         when (position) {
@@ -36,7 +39,7 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.CustomViewHolder>() {
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         when(getItemViewType(position)){
             TYPE_VIDEO -> {
-                (holder as VideoViewHolder).bind()
+                (holder as VideoViewHolder).bind(callback)
             }
         }
     }
