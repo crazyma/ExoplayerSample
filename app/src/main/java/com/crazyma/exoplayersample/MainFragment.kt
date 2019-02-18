@@ -1,5 +1,6 @@
 package com.crazyma.exoplayersample
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,8 @@ class MainFragment: Fragment() {
                     it?.apply {
                         imageView.setImageBitmap(this)
                     }
+
+                    startActivity(Intent(context!!, SecondActivity::class.java))
                 }
             }
         }
