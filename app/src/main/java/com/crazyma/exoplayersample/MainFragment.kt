@@ -1,13 +1,19 @@
 package com.crazyma.exoplayersample
 
+import android.app.ActivityOptions
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_main.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 
 class MainFragment: Fragment() {
 
@@ -24,15 +30,55 @@ class MainFragment: Fragment() {
         recyclerView.apply {
             layoutManager = LinearLayoutManager(context!!)
             adapter = MainAdapter().apply {
-                callback = {
-                    it?.apply {
-                        imageView.setImageBitmap(this)
+                callback = { view, bitmap ->
+                    view.apply {
+                        Log.d("badu","get bitmap count : " + bitmap.byteCount + " | " + bitmap.toString())
+                        val compressedBitmap = compressBitmap2(bitmap)
+                        if(compressedBitmap != null) {
+
+                            Log.d("badu","get compressedBitmap count : " + compressedBitmap.byteCount + " | " + compressedBitmap.toString())
+                            val options = ActivityOptions.makeSceneTransitionAnimation(activity!!, this, "robot")
+
+                            val intent = Intent(context!!, SecondActivity::class.java).apply {
+                                putExtra("bitmap", compressedBitmap)
+                            }
+                            startActivity(intent, options.toBundle())
+                        }
                     }
 
-                    startActivity(Intent(context!!, SecondActivity::class.java))
+//                    testImageView.setImageBitmap(bitmap)
                 }
             }
         }
+    }
+
+    private fun compressBitmap(bitmap: Bitmap): Bitmap?{
+        val outputStream = ByteArrayOutputStream()
+        var quality = 100
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+        Log.i("badu","size : ${outputStream.toByteArray().size}")
+        while(outputStream.toByteArray().size / 1024 > 100){
+            outputStream.reset()
+            quality -= 10
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+            Log.i("badu","size : ${outputStream.toByteArray().size}")
+        }
+
+        val inputStream = ByteArrayInputStream(outputStream.toByteArray())
+        return BitmapFactory.decodeStream(inputStream, null, null)
+    }
+
+    private fun compressBitmap2(bitmap: Bitmap): Bitmap?{
+        var newWidth = bitmap.width.toFloat()
+        var newHeight = bitmap.height.toFloat()
+        var newBitmap = Bitmap.createScaledBitmap(bitmap, newWidth.toInt(), newHeight.toInt(), false)
+        while(newBitmap.byteCount > 1024 * 10){
+            newWidth *= 0.8f
+            newHeight *= 0.8f
+            newBitmap.recycle()
+            newBitmap = Bitmap.createScaledBitmap(bitmap, newWidth.toInt(), newHeight.toInt(), false)
+        }
+        return newBitmap
     }
 
 }

@@ -24,7 +24,7 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
         }
     }
 
-    fun bind(callback:(Bitmap?) -> Unit){
+    fun bind(callback:(View, Bitmap) -> Unit){
         itemView.imageView.visibility = View.GONE
         itemView.playerView.apply {
             var simpleExoPlayer: SimpleExoPlayer
@@ -43,9 +43,14 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
                 val textureView = this.videoSurfaceView as TextureView
                 itemView.imageView.apply {
                     visibility = View.VISIBLE
-                    setImageBitmap(textureView.bitmap)
+                    val bitmap = textureView.bitmap.run {
+                        copy(config, isMutable)
+                    }
+
+                    setImageBitmap(bitmap)
+                    callback.invoke(this, textureView.bitmap)
+
                 }
-                callback.invoke(null)
             }
         }
     }

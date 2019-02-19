@@ -13,7 +13,7 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.CustomViewHolder>() {
         const val TYPE_VIDEO = 2
     }
 
-    lateinit var callback: (Bitmap?) -> Unit
+    lateinit var callback: (View, Bitmap) -> Unit
 
     override fun getItemViewType(position: Int) =
         when (position) {
