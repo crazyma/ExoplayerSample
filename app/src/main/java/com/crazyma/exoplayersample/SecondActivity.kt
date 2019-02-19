@@ -13,12 +13,15 @@ class SecondActivity : AppCompatActivity() {
         setupTransition()
         setContentView(R.layout.activity_main)
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             val fragment = SecondFragment().apply {
                 Bundle().apply {
                     putParcelable(
                         "bitmap",
-                        intent.getParcelableExtra<Parcelable>("bitmap"))
+                        intent.getParcelableExtra<Parcelable>("bitmap")
+                    )
+
+                    putLong("position", intent.getLongExtra("position", 0))
                 }.also {
                     arguments = it
                 }
@@ -30,7 +33,7 @@ class SecondActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupTransition(){
+    private fun setupTransition() {
         window.apply {
             requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
             enterTransition = Fade()

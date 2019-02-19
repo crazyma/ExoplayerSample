@@ -13,7 +13,7 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.CustomViewHolder>() {
         const val TYPE_VIDEO = 2
     }
 
-    lateinit var callback: (View, Bitmap) -> Unit
+    lateinit var callback: (View, Bitmap, Long) -> Unit
 
     override fun getItemViewType(position: Int) =
         when (position) {
@@ -37,7 +37,7 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.CustomViewHolder>() {
     override fun getItemCount() = 20
 
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-        when(getItemViewType(position)){
+        when (getItemViewType(position)) {
             TYPE_VIDEO -> {
                 (holder as VideoViewHolder).bind(callback)
             }

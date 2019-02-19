@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
-class MainFragment: Fragment() {
+class MainFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
@@ -27,13 +27,13 @@ class MainFragment: Fragment() {
         setupRecyclerView()
     }
 
-    private fun setupRecyclerView(){
+    private fun setupRecyclerView() {
         recyclerView.apply {
             layoutManager = LinearLayoutManager(context!!)
             adapter = MainAdapter().apply {
-                callback = { view, bitmap ->
+                callback = { view, bitmap, position ->
 
-                    delayJump(view, bitmap)
+                    delayJump(view, bitmap, position)
 
 
 //                    testImageView.setImageBitmap(bitmap)
@@ -42,47 +42,51 @@ class MainFragment: Fragment() {
         }
     }
 
-    private fun delayJump(view: View, bitmap: Bitmap){
+    private fun delayJump(view: View, bitmap: Bitmap, position: Long) {
 
         Handler().postDelayed({
-            Log.d("badu","get bitmap count : " + bitmap.byteCount + " | " + bitmap.toString())
+            Log.d("badu", "get bitmap count : " + bitmap.byteCount + " | " + bitmap.toString())
             val compressedBitmap = compressBitmap2(bitmap)
-            if(compressedBitmap != null) {
+            if (compressedBitmap != null) {
 
-                Log.d("badu","get compressedBitmap count : " + compressedBitmap.byteCount + " | " + compressedBitmap.toString())
+                Log.d(
+                    "badu",
+                    "get compressedBitmap count : " + compressedBitmap.byteCount + " | " + compressedBitmap.toString()
+                )
                 val options = ActivityOptions.makeSceneTransitionAnimation(activity!!, view, "robot")
 
                 val intent = Intent(context!!, SecondActivity::class.java).apply {
                     putExtra("bitmap", compressedBitmap)
+                    putExtra("position", position)
                 }
                 startActivity(intent, options.toBundle())
             }
-        },100)
+        }, 100)
 
 
     }
 
-    private fun compressBitmap(bitmap: Bitmap): Bitmap?{
+    private fun compressBitmap(bitmap: Bitmap): Bitmap? {
         val outputStream = ByteArrayOutputStream()
         var quality = 100
         bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
-        Log.i("badu","size : ${outputStream.toByteArray().size}")
-        while(outputStream.toByteArray().size / 1024 > 100){
+        Log.i("badu", "size : ${outputStream.toByteArray().size}")
+        while (outputStream.toByteArray().size / 1024 > 100) {
             outputStream.reset()
             quality -= 10
             bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
-            Log.i("badu","size : ${outputStream.toByteArray().size}")
+            Log.i("badu", "size : ${outputStream.toByteArray().size}")
         }
 
         val inputStream = ByteArrayInputStream(outputStream.toByteArray())
         return BitmapFactory.decodeStream(inputStream, null, null)
     }
 
-    private fun compressBitmap2(bitmap: Bitmap): Bitmap?{
+    private fun compressBitmap2(bitmap: Bitmap): Bitmap? {
         var newWidth = bitmap.width.toFloat()
         var newHeight = bitmap.height.toFloat()
         var newBitmap = Bitmap.createScaledBitmap(bitmap, newWidth.toInt(), newHeight.toInt(), false)
-        while(newBitmap.byteCount > 1024 * 500){
+        while (newBitmap.byteCount > 1024 * 500) {
             newWidth *= 0.8f
             newHeight *= 0.8f
             newBitmap.recycle()

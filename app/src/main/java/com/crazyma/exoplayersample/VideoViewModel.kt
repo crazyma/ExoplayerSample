@@ -24,23 +24,27 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
         }
     }
 
-    fun bind(callback:(View, Bitmap) -> Unit){
+    fun bind(callback: (View, Bitmap, Long) -> Unit) {
         itemView.imageView.visibility = View.GONE
         itemView.playerView.apply {
             var simpleExoPlayer: SimpleExoPlayer
-            if(tag == null) {
-                simpleExoPlayer= loadPlayer()
+            if (tag == null) {
+                simpleExoPlayer = loadPlayer()
                 player = simpleExoPlayer
                 player.addListener(this@VideoViewHolder)
                 tag = simpleExoPlayer
-            }else {
+            } else {
                 simpleExoPlayer = tag as SimpleExoPlayer
-                simpleExoPlayer.seekTo(24608)
+                simpleExoPlayer.seekTo(0)
             }
 
             setOnClickListener {
-                Log.d("badu","current position: ${simpleExoPlayer.currentPosition}")
+                val position = simpleExoPlayer.currentPosition
                 val textureView = this.videoSurfaceView as TextureView
+
+                Log.i("badu","position : ${position}")
+                Log.i("badu","duration : ${simpleExoPlayer.duration}")
+
                 itemView.imageView.apply {
                     visibility = View.VISIBLE
                     val bitmap = textureView.bitmap.run {
@@ -48,14 +52,14 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
                     }
 
                     setImageBitmap(bitmap)
-                    callback.invoke(this, textureView.bitmap)
+                    callback.invoke(this, textureView.bitmap, position)
 
                 }
             }
         }
     }
 
-    private fun loadPlayer(): SimpleExoPlayer{
+    private fun loadPlayer(): SimpleExoPlayer {
         val context = itemView.context!!
         val player = ExoPlayerFactory.newSimpleInstance(context).apply {
             playWhenReady = true
