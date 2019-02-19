@@ -4,17 +4,18 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+    <com.crazyma.exoplayersample.AspectRatioFrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:resize_mode="fixed_width">
+        app:ratioWidth="16"
+        app:ratioHeight="9">
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="match_parent"
             android:background="#666666"/>
 
-    </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
+    </com.crazyma.exoplayersample.AspectRatioFrameLayout>
 
     <TextView
         android:layout_width="wrap_content"
