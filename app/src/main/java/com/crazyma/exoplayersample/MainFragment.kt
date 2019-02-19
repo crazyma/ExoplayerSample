@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -31,25 +32,34 @@ class MainFragment: Fragment() {
             layoutManager = LinearLayoutManager(context!!)
             adapter = MainAdapter().apply {
                 callback = { view, bitmap ->
-                    view.apply {
-                        Log.d("badu","get bitmap count : " + bitmap.byteCount + " | " + bitmap.toString())
-                        val compressedBitmap = compressBitmap2(bitmap)
-                        if(compressedBitmap != null) {
 
-                            Log.d("badu","get compressedBitmap count : " + compressedBitmap.byteCount + " | " + compressedBitmap.toString())
-                            val options = ActivityOptions.makeSceneTransitionAnimation(activity!!, this, "robot")
+                    delayJump(view, bitmap)
 
-                            val intent = Intent(context!!, SecondActivity::class.java).apply {
-                                putExtra("bitmap", compressedBitmap)
-                            }
-                            startActivity(intent, options.toBundle())
-                        }
-                    }
 
 //                    testImageView.setImageBitmap(bitmap)
                 }
             }
         }
+    }
+
+    private fun delayJump(view: View, bitmap: Bitmap){
+
+        Handler().postDelayed({
+            Log.d("badu","get bitmap count : " + bitmap.byteCount + " | " + bitmap.toString())
+            val compressedBitmap = compressBitmap2(bitmap)
+            if(compressedBitmap != null) {
+
+                Log.d("badu","get compressedBitmap count : " + compressedBitmap.byteCount + " | " + compressedBitmap.toString())
+                val options = ActivityOptions.makeSceneTransitionAnimation(activity!!, view, "robot")
+
+                val intent = Intent(context!!, SecondActivity::class.java).apply {
+                    putExtra("bitmap", compressedBitmap)
+                }
+                startActivity(intent, options.toBundle())
+            }
+        },100)
+
+
     }
 
     private fun compressBitmap(bitmap: Bitmap): Bitmap?{
@@ -72,7 +82,7 @@ class MainFragment: Fragment() {
         var newWidth = bitmap.width.toFloat()
         var newHeight = bitmap.height.toFloat()
         var newBitmap = Bitmap.createScaledBitmap(bitmap, newWidth.toInt(), newHeight.toInt(), false)
-        while(newBitmap.byteCount > 1024 * 10){
+        while(newBitmap.byteCount > 1024 * 500){
             newWidth *= 0.8f
             newHeight *= 0.8f
             newBitmap.recycle()
