@@ -3,6 +3,7 @@ package com.crazyma.exoplayersample
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.transition.Fade
+import android.util.Log
 import android.view.Window
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity() {
                 .commit()
         }
 
+        test()
     }
 
     private fun setupTransition(){
@@ -27,5 +29,59 @@ class MainActivity : AppCompatActivity() {
             exitTransition = Fade()
             reenterTransition = Fade()
         }
+    }
+
+    private fun test(){
+        val map = LinkedHashMap<Int, String>(16, .75f, true)
+
+        map.put(0,"aaa")
+        map.put(1,"bbb")
+        map.put(2,"ccc")
+        map.put(3,"ddd")
+        map.put(4,"eee")
+        map.put(5,"fff")
+
+        for((key, value) in map){
+            Log.d("badu","key: $key, value: $value")
+        }
+        Log.i("badu","-----")
+
+        map[1]
+        map[5]
+        map[3]
+
+        for((key, value) in map){
+            Log.d("badu","key: $key, value: $value")
+        }
+        Log.i("badu","-----")
+
+        map[2]
+        map[0]
+
+        for((key, value) in map){
+            Log.d("badu","key: $key, value: $value")
+        }
+        Log.i("badu","-----")
+
+        map.keys.iterator().next().let {
+            map.remove(it)
+        }
+
+        for((key, value) in map){
+            Log.d("badu","key: $key, value: $value")
+        }
+        Log.i("badu","-----")
+
+        map[1]
+        map.keys.iterator().next().let {
+            map.remove(it)
+        }
+
+        for((key, value) in map){
+            Log.d("badu","key: $key, value: $value")
+        }
+        Log.i("badu","-----")
+
+
     }
 }
