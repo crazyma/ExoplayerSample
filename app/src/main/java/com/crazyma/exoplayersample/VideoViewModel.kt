@@ -29,7 +29,9 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
         itemView.playerView.apply {
             var simpleExoPlayer: SimpleExoPlayer
             if (tag == null) {
-                simpleExoPlayer = loadPlayer()
+                simpleExoPlayer = ExoplayerManager.getPlayer(
+                    context!!,
+                    "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
                 player = simpleExoPlayer
                 player.addListener(this@VideoViewHolder)
                 tag = simpleExoPlayer

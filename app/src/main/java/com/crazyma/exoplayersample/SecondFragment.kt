@@ -41,10 +41,13 @@ class SecondFragment : Fragment() {
             imageView.setImageBitmap(it)
         }
 
-        val simpleExoPlayer = loadPlayer()
+        val simpleExoPlayer = ExoplayerManager.getPlayer(
+            context!!,
+            "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
+
         playerView.player = simpleExoPlayer
         Log.d("badu","duration : ${simpleExoPlayer.duration}")
-        reenterTransition
+
         delayPlay()
         delayHide()
     }
