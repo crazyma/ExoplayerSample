@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.transition.Fade
 import android.util.Log
 import android.view.Window
+import java.io.File
+import java.io.FileOutputStream
+import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         test()
+        saveVideoFile()
     }
 
     private fun setupTransition(){
@@ -81,6 +85,45 @@ class MainActivity : AppCompatActivity() {
             Log.d("badu","key: $key, value: $value")
         }
         Log.i("badu","-----")
+    }
+
+    private fun saveVideoFile(){
+        val directory = File(cacheDir.toString() + "/DcardAdVideo")
+        if(directory.exists()){
+            Log.d("badu","directory is already exist")
+        }else{
+            if(directory.mkdir()){
+                Log.d("badu","directory is created")
+            }else{
+                Log.w("badu","directory failed to create")
+                return
+            }
+        }
+
+        val file = File(directory,"test.mp4")
+        Log.d("badu","file: ${file.absolutePath}")
+
+        Thread(Runnable {
+            try {
+                val inputStream = URL("https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4").run {
+                    openStream()
+                }
+
+                var read = -1
+
+                val outputStream = FileOutputStream(file)
+                inputStream.use { input ->
+                    outputStream.use {
+                        while (input.read().also { read = it } != -1) {
+                            it.write(read)
+                        }
+                    }
+                }
+                Log.d("badu","save file done")
+            } catch (t: Throwable){
+                t.printStackTrace()
+            }
+        }).start()
 
 
     }
