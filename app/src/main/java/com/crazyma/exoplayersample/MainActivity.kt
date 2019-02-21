@@ -1,10 +1,13 @@
 package com.crazyma.exoplayersample
 
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.transition.Fade
 import android.util.Log
 import android.view.Window
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
@@ -18,13 +21,13 @@ class MainActivity : AppCompatActivity() {
 
         if(savedInstanceState == null){
             val fragment = MainFragment()
-            supportFragmentManager.beginTransaction()
-                .add(R.id.container, fragment)
-                .commit()
+//            supportFragmentManager.beginTransaction()
+//                .add(R.id.container, fragment)
+//                .commit()
         }
 
-        test()
-        saveVideoFile()
+        saveVideoViaWorker()
+//        saveVideoFile()
     }
 
     private fun setupTransition(){
@@ -87,6 +90,12 @@ class MainActivity : AppCompatActivity() {
         Log.i("badu","-----")
     }
 
+    private fun saveVideoViaWorker(){
+        Log.d("badu","!!!!")
+        val worker = OneTimeWorkRequest.Builder(VideoDownloadWorker::class.java).build()
+        WorkManager.getInstance().enqueue(worker)
+    }
+
     private fun saveVideoFile(){
         val directory = File(cacheDir.toString() + "/DcardAdVideo")
         if(directory.exists()){
@@ -126,5 +135,20 @@ class MainActivity : AppCompatActivity() {
         }).start()
 
 
+        val uri = Uri.parse("https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
+        Log.i("badu","host: ${uri.host}")
+        Log.i("badu","scheme: ${uri.scheme}")
+        Log.i("badu","path: ${uri.path}")
+        Log.i("badu","authority: ${uri.authority}")
+        Log.i("badu","lastPathSegment: ${uri.lastPathSegment}")
+        Log.i("badu","pathSegments: ${uri.pathSegments}")
+        Log.i("badu","schemeSpecificPart: ${uri.schemeSpecificPart}")
+
+
+        String.format("%s%s",
+            uri.host,
+            uri.path.let { it?.substring(0, it.lastIndexOf(".")) ?: "" }).also {
+            Log.d("badu","test: $it")
+        }
     }
 }
