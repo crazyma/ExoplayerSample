@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import java.io.File
 
 object ExoplayerManager {
 
@@ -23,6 +24,14 @@ object ExoplayerManager {
 
         adjustSize()
 
+        val file = File(VedioCacheManager.getDirectory(context), "test.mp4")
+        val uri = Uri.fromFile(file)
+//        val videoSource =
+//            ExtractorMediaSource.Factory(dataSourceFactory)
+//                .createMediaSource(Uri.parse("https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"))
+
+
+
         return ExoPlayerFactory.newSimpleInstance(applicationContext).apply {
             playWhenReady = true
             val dataSourceFactory = DefaultDataSourceFactory(
@@ -31,7 +40,7 @@ object ExoplayerManager {
             )
             val videoSource =
                 ExtractorMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(Uri.parse(urlString))
+                    .createMediaSource(uri)
             prepare(videoSource)
 
             map[urlString] = this

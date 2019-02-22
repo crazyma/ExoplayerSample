@@ -45,7 +45,7 @@ class VideoDownloadWorker(context: Context, workerParams: WorkerParameters) : Wo
             var read : Int
             val inputStream = byteStream()
             val outputStream = FileOutputStream(file)
-            val buffer = ByteArray(1024)
+            val buffer = ByteArray(4)
 
             inputStream.use {input ->
                 outputStream.use {output ->

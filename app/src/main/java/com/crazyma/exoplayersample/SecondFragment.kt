@@ -9,18 +9,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import kotlinx.android.synthetic.main.item_video.*
+import com.google.common.util.concurrent.ListenableFuture
+import kotlinx.android.synthetic.main.fragment_second.*
 
 class SecondFragment : Fragment() {
 
     var bitmap: Bitmap? = null
     var position: Long = 0
+    lateinit var future: ListenableFuture<List<WorkInfo>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +52,64 @@ class SecondFragment : Fragment() {
 
         playerView.player = simpleExoPlayer
         Log.d("badu","duration : ${simpleExoPlayer.duration}")
+
+
+
+        button.setOnClickListener {
+            future = WorkManager.getInstance().getWorkInfosByTag("XD")
+            val list = future.get()
+            list.forEach {
+                when (it.state) {
+                    WorkInfo.State.ENQUEUED -> {
+                        Log.i("badu", "ENQUEUED")
+                    }
+                    WorkInfo.State.CANCELLED -> {
+                        Log.i("badu", "CANCELLED")
+                    }
+                    WorkInfo.State.RUNNING -> {
+                        Log.i("badu", "RUNNING")
+                    }
+                    WorkInfo.State.BLOCKED -> {
+                        Log.i("badu", "BLOCKED")
+                    }
+                    WorkInfo.State.FAILED -> {
+                        Log.i("badu", "FAILED")
+                    }
+                    WorkInfo.State.SUCCEEDED -> {
+                        Log.i("badu", "SUCCEEDED")
+                    }
+                }
+            }
+        }
+
+
+
+//        WorkManager.getInstance().getWorkInfosByTagLiveData("XD").observe(viewLifecycleOwner, Observer { list ->
+//            list.forEach {
+//                if (it != null) {
+//                    when (it.state) {
+//                        WorkInfo.State.ENQUEUED -> {
+//                            Log.i("badu", "ENQUEUED")
+//                        }
+//                        WorkInfo.State.CANCELLED -> {
+//                            Log.i("badu", "CANCELLED")
+//                        }
+//                        WorkInfo.State.RUNNING -> {
+//                            Log.i("badu", "RUNNING")
+//                        }
+//                        WorkInfo.State.BLOCKED -> {
+//                            Log.i("badu", "BLOCKED")
+//                        }
+//                        WorkInfo.State.FAILED -> {
+//                            Log.i("badu", "FAILED")
+//                        }
+//                        WorkInfo.State.SUCCEEDED -> {
+//                            Log.i("badu", "SUCCEEDED")
+//                        }
+//                    }
+//                }
+//            }
+//        })
 
         delayPlay()
         delayHide()

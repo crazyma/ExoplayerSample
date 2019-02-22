@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.item_video.view.*
+import java.io.File
 
 class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.EventListener {
     companion object {
@@ -69,6 +70,8 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
                 context,
                 Util.getUserAgent(context, "hiking-playground")
             )
+            val file = File(VedioCacheManager.getDirectory(itemView.context), "test.mp4")
+            val uri = Uri.fromFile(file)
             val videoSource =
                 ExtractorMediaSource.Factory(dataSourceFactory)
                     .createMediaSource(Uri.parse("https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"))
