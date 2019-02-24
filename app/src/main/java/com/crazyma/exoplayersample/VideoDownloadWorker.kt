@@ -21,13 +21,18 @@ class VideoDownloadWorker(context: Context, workerParams: WorkerParameters) : Wo
     }
 
     private fun saveViaOKHttp(){
+        //  TODO: change to constant
+        val urlString = inputData.getString("url")
+        val filename = inputData.getString("filename")
+
         val client = OkHttpClient()
-        val request = Request.Builder().url("https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
+        val request = Request.Builder().url(urlString)
             .build()
         val response = client.newCall(request).execute()
 
         response.body()?.run{
 
+            //  TODO: get to path from input data
             val directory = File(applicationContext.cacheDir.toString() + "/DcardAdVideo")
             if (directory.exists()) {
                 Log.d("badu", "directory is already exist")
@@ -40,7 +45,7 @@ class VideoDownloadWorker(context: Context, workerParams: WorkerParameters) : Wo
                 }
             }
 
-            val file = File(directory, "test.mp4")
+            val file = File(directory, filename)
 
             var read : Int
             val inputStream = byteStream()

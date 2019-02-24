@@ -9,7 +9,7 @@ import com.google.android.exoplayer2.util.Util
 
 class ExoplayerManager(val fileManager: VideoCacheManager.FileManager) {
 
-    private val map = LinkedHashMap<String, SimpleExoPlayer>(8, .75f, true)
+    private val map = LinkedHashMap<String, SimpleExoPlayer>(MAX_COUNT * 2, .75f, true)
 
     /**
      * Get SimpleExoPlayer instance. If the local video file is not exist, return null
@@ -25,7 +25,7 @@ class ExoplayerManager(val fileManager: VideoCacheManager.FileManager) {
         adjustSize()
 
         val file = fileManager.getVideoFile(applicationContext, urlString)
-        if(!file.exists()){
+        if (!file.exists()) {
             return null
         }
 
@@ -58,7 +58,7 @@ class ExoplayerManager(val fileManager: VideoCacheManager.FileManager) {
     }
 
     companion object {
-        private val MAX_COUNT = 8
+        private const val MAX_COUNT = 8
 
         private var INSTANCE: ExoplayerManager? = null
 

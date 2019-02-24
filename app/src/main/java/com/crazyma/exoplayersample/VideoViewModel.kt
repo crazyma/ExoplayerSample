@@ -2,11 +2,11 @@ package com.crazyma.exoplayersample
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
+import com.crazyma.exoplayersample.VideoCacheManager.Companion.STATE_EXIST
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -27,25 +27,31 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
     fun bind(callback: (View, Bitmap, Long) -> Unit) {
         itemView.imageView.visibility = View.GONE
         itemView.playerView.apply {
-            var simpleExoPlayer: SimpleExoPlayer
-            if (tag == null) {
-                simpleExoPlayer = ExoplayerManager.getPlayer(
-                    context!!,
-                    "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
+            var simpleExoPlayer: SimpleExoPlayer? = null
+            var urlString = "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
+            val payload = VideoCacheManager.getInstance().getPlayer(itemView.context, urlString)
+            if (payload?.state == STATE_EXIST) {
+                simpleExoPlayer = payload.exoplayer!!
                 player = simpleExoPlayer
-                player.addListener(this@VideoViewHolder)
-                tag = simpleExoPlayer
-            } else {
-                simpleExoPlayer = tag as SimpleExoPlayer
                 simpleExoPlayer.seekTo(0)
             }
 
-            setOnClickListener {
-                val position = simpleExoPlayer.currentPosition
-                val textureView = this.videoSurfaceView as TextureView
 
-                Log.i("badu","position : ${position}")
-                Log.i("badu","duration : ${simpleExoPlayer.duration}")
+//            if (tag == null) {
+//                simpleExoPlayer = ExoplayerManager.getPlayer(
+//                    context!!,
+//                    "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
+//                player = simpleExoPlayer
+//                player.addListener(this@VideoViewHolder)
+//                tag = simpleExoPlayer
+//            } else {
+//                simpleExoPlayer = tag as SimpleExoPlayer
+//                simpleExoPlayer.seekTo(0)
+//            }
+
+            setOnClickListener {
+                val position = simpleExoPlayer?.currentPosition ?: 0
+                val textureView = this.videoSurfaceView as TextureView
 
                 itemView.imageView.apply {
                     visibility = View.VISIBLE
