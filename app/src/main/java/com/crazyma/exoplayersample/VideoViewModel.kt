@@ -1,20 +1,14 @@
 package com.crazyma.exoplayersample
 
 import android.graphics.Bitmap
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import com.crazyma.exoplayersample.VideoCacheManager.Companion.STATE_EXIST
-import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.item_video.view.*
-import java.io.File
 
 class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.EventListener {
     companion object {
@@ -36,7 +30,6 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
                 player = simpleExoPlayer
                 simpleExoPlayer.seekTo(0)
             }
-
 
 //            if (tag == null) {
 //                simpleExoPlayer = ExoplayerManager.getPlayer(
