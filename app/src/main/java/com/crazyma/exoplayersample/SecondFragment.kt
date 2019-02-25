@@ -9,10 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -46,15 +44,6 @@ class SecondFragment : Fragment() {
             imageView.setImageBitmap(it)
         }
 
-        val simpleExoPlayer = ExoplayerManager.getPlayer(
-            context!!,
-            "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
-
-        playerView.player = simpleExoPlayer
-        Log.d("badu","duration : ${simpleExoPlayer.duration}")
-
-
-
         button.setOnClickListener {
             future = WorkManager.getInstance().getWorkInfosByTag("XD")
             val list = future.get()
@@ -82,37 +71,15 @@ class SecondFragment : Fragment() {
             }
         }
 
-
-
-//        WorkManager.getInstance().getWorkInfosByTagLiveData("XD").observe(viewLifecycleOwner, Observer { list ->
-//            list.forEach {
-//                if (it != null) {
-//                    when (it.state) {
-//                        WorkInfo.State.ENQUEUED -> {
-//                            Log.i("badu", "ENQUEUED")
-//                        }
-//                        WorkInfo.State.CANCELLED -> {
-//                            Log.i("badu", "CANCELLED")
-//                        }
-//                        WorkInfo.State.RUNNING -> {
-//                            Log.i("badu", "RUNNING")
-//                        }
-//                        WorkInfo.State.BLOCKED -> {
-//                            Log.i("badu", "BLOCKED")
-//                        }
-//                        WorkInfo.State.FAILED -> {
-//                            Log.i("badu", "FAILED")
-//                        }
-//                        WorkInfo.State.SUCCEEDED -> {
-//                            Log.i("badu", "SUCCEEDED")
-//                        }
-//                    }
-//                }
-//            }
-//        })
-
-        delayPlay()
-        delayHide()
+//        val simpleExoPlayer = ExoplayerManager.getPlayer(
+//            context!!,
+//            "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
+//
+//        playerView.player = simpleExoPlayer
+//        Log.d("badu","duration : ${simpleExoPlayer.duration}")
+//
+//        delayPlay()
+//        delayHide()
     }
 
     private fun delayPlay(){
