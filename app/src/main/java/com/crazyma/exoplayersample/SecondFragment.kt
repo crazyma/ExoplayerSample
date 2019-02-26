@@ -9,6 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import com.crazyma.exoplayersample.VideoCacheManager.Companion.STATE_DOWNLOADING
+import com.crazyma.exoplayersample.VideoCacheManager.Companion.STATE_ERROR
+import com.crazyma.exoplayersample.VideoCacheManager.Companion.STATE_EXIST
+import com.crazyma.exoplayersample.VideoCacheManager.Companion.STATE_NON_EXIST
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -50,11 +59,68 @@ class SecondFragment : Fragment() {
 //
 //        delayPlay()
 //        delayHide()
+        loadPlayer2()
     }
 
-    private fun delayPlay(){
+    private fun loadPlayer2() {
+        val urlString = "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
+        val videoCacheManager = VideoCacheManager.getInstance()
+        val payload = videoCacheManager.getPlayer(context!!, urlString)
+        when (payload.state) {
+            STATE_EXIST -> {
+                Log.d("badu", "Second Fragment | EXIST")
+                playerView.player = payload.exoplayer!!
+            }
+            STATE_DOWNLOADING -> {
+                Log.d("badu", "Second Fragment | DOWNLOADING")
+                videoCacheManager.getUUID(urlString)?.apply {
+                    WorkManager.getInstance().getWorkInfoByIdLiveData(this).observe(viewLifecycleOwner, Observer {
+                        if (it != null) {
+                            when (it.state) {
+                                WorkInfo.State.SUCCEEDED -> {
+                                    Log.d("badu", "observe by download file finished in Second Page")
+                                    videoCacheManager.removeUUID(it.outputData.getString("url")!!)
+                                    loadPlayer2()
+                                }
+                                else -> {}
+                            }
+                        }
+                    })
+                }
+            }
+            STATE_NON_EXIST -> {
+                Log.d("badu", "Second Fragment | NON EXIST")
+                val data = Data.Builder().apply {
+                    putString("url", urlString)
+                    putString("filename", "big_buck_bunny.mp4") //  TODO: need to be replaced
+                }.build()
+                val worker = OneTimeWorkRequest.Builder(VideoDownloadWorker::class.java)
+                    .setInputData(data)
+                    .build()
+
+                WorkManager.getInstance().enqueue(worker)
+                WorkManager.getInstance().getWorkInfoByIdLiveData(worker.id).observe(viewLifecycleOwner, Observer {
+                    if (it != null) {
+                        when (it.state) {
+                            WorkInfo.State.SUCCEEDED -> {
+                                Log.d("badu", "observe by download file finished in Second Page")
+                                videoCacheManager.removeUUID(it.outputData.getString("url")!!)
+                                loadPlayer2()
+                            }
+                            else -> {}
+                        }
+                    }
+                })
+            }
+            STATE_ERROR -> {
+
+            }
+        }
+    }
+
+    private fun delayPlay() {
         playerView.player.apply {
-            Log.d("badu","duration : ${duration}")
+            Log.d("badu", "duration : ${duration}")
             seekTo(position)
             playWhenReady = true
         }
@@ -76,10 +142,10 @@ class SecondFragment : Fragment() {
         return player
     }
 
-    private fun delayHide(){
+    private fun delayHide() {
         Handler().postDelayed({
             imageView.visibility = View.INVISIBLE
-        },500)
+        }, 500)
     }
 
 }

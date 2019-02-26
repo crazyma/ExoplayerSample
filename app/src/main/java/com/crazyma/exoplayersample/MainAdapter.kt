@@ -14,6 +14,7 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.CustomViewHolder>() {
     }
 
     lateinit var callback: (View, Bitmap, Long) -> Unit
+    lateinit var needDownloadCallback: (String) -> Unit
 
     override fun getItemViewType(position: Int) =
         when (position) {
@@ -39,7 +40,7 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.CustomViewHolder>() {
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         when (getItemViewType(position)) {
             TYPE_VIDEO -> {
-                (holder as VideoViewHolder).bind(callback)
+                (holder as VideoViewHolder).bind(callback, needDownloadCallback)
             }
         }
     }
