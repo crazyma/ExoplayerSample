@@ -91,7 +91,7 @@ class SecondFragment : Fragment() {
     }
 
     private fun loadPlayer2() {
-        val urlString = "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
+        val urlString = "https://megapx-stage-assets.dcard.io/videos/b33a880e-131b-4597-afe8-7210348aa954/orig"
         val videoCacheManager = VideoCacheManager.getInstance()
         val payload = videoCacheManager.getPlayer(context!!, urlString)
         when (payload.state) {
@@ -120,7 +120,7 @@ class SecondFragment : Fragment() {
                 Log.d("badu", "Second Fragment | NON EXIST")
                 val data = Data.Builder().apply {
                     putString("url", urlString)
-                    putString("filename", "big_buck_bunny.mp4") //  TODO: need to be replaced
+                    putString("filename", "megapx.mp4") //  TODO: need to be replaced
                 }.build()
                 val worker = OneTimeWorkRequest.Builder(VideoDownloadWorker::class.java)
                     .setInputData(data)
