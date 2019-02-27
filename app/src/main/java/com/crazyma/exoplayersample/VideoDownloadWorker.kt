@@ -2,6 +2,7 @@ package com.crazyma.exoplayersample
 
 import android.content.Context
 import android.util.Log
+import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import java.io.File
@@ -16,14 +17,20 @@ class VideoDownloadWorker(context: Context, workerParams: WorkerParameters) : Wo
     override fun doWork(): Result {
 
 //        saveVideoFile()
-        saveViaOKHttp()
-        return Result.success()
+        //  TODO: change to constant
+        val urlString = inputData.getString("url")!!
+        val filename = inputData.getString("filename")!!
+        saveViaOKHttp(urlString, filename)
+
+        return Data.Builder()
+            .putString("url", urlString)
+            .build().let {
+                Result.success(it)
+            }
     }
 
-    private fun saveViaOKHttp(){
-        //  TODO: change to constant
-        val urlString = inputData.getString("url")
-        val filename = inputData.getString("filename")
+    private fun saveViaOKHttp(urlString: String, filename: String){
+
 
         val client = OkHttpClient()
         val request = Request.Builder().url(urlString)

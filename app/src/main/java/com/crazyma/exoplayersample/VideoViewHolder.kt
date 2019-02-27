@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
+import com.crazyma.exoplayersample.VideoCacheManager.Companion.STATE_ERROR
 import com.crazyma.exoplayersample.VideoCacheManager.Companion.STATE_EXIST
+import com.crazyma.exoplayersample.VideoCacheManager.Companion.STATE_NON_EXIST
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import kotlinx.android.synthetic.main.item_video.view.*
@@ -19,29 +21,26 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
         }
     }
 
-    fun bind(callback: (View, Bitmap, Long) -> Unit) {
+    fun bind(callback: (View, Bitmap, Long) -> Unit, needDownloadCallback: (String) -> Unit) {
         itemView.imageView.visibility = View.GONE
         itemView.playerView.apply {
             var simpleExoPlayer: SimpleExoPlayer? = null
             var urlString = "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
             val payload = VideoCacheManager.getInstance().getPlayer(itemView.context, urlString)
-            if (payload?.state == STATE_EXIST) {
-                simpleExoPlayer = payload.exoplayer!!
-                player = simpleExoPlayer
-                simpleExoPlayer.seekTo(0)
-            }
 
-//            if (tag == null) {
-//                simpleExoPlayer = ExoplayerManager.getPlayer(
-//                    context!!,
-//                    "https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
-//                player = simpleExoPlayer
-//                player.addListener(this@VideoViewHolder)
-//                tag = simpleExoPlayer
-//            } else {
-//                simpleExoPlayer = tag as SimpleExoPlayer
-//                simpleExoPlayer.seekTo(0)
-//            }
+            when(payload.state){
+                STATE_EXIST -> {
+                    simpleExoPlayer = payload.exoplayer!!
+                    player = simpleExoPlayer
+                    simpleExoPlayer.seekTo(0)
+                }
+                STATE_ERROR -> {
+
+                }
+                STATE_NON_EXIST ->{
+                    needDownloadCallback.invoke(urlString)
+                }
+            }
 
             setOnClickListener {
                 val position = simpleExoPlayer?.currentPosition ?: 0
@@ -60,23 +59,5 @@ class VideoViewHolder(view: View) : MainAdapter.CustomViewHolder(view), Player.E
             }
         }
     }
-
-//    private fun loadPlayer(): SimpleExoPlayer {
-//        val context = itemView.context!!
-//        val player = ExoPlayerFactory.newSimpleInstance(context).apply {
-//            playWhenReady = true
-//            val dataSourceFactory = DefaultDataSourceFactory(
-//                context,
-//                Util.getUserAgent(context, "hiking-playground")
-//            )
-//            val file = File(VedioCacheManager.getDirectory(itemView.context), "test.mp4")
-//            val uri = Uri.fromFile(file)
-//            val videoSource =
-//                ExtractorMediaSource.Factory(dataSourceFactory)
-//                    .createMediaSource(Uri.parse("https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"))
-//            prepare(videoSource)
-//        }!!
-//        return player
-//    }
 
 }

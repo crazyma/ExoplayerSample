@@ -11,7 +11,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import kotlinx.android.synthetic.main.fragment_main.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -37,6 +42,42 @@ class MainFragment : Fragment() {
 
 
 //                    testImageView.setImageBitmap(bitmap)
+                }
+
+                needDownloadCallback = { urlString ->
+                    val data = Data.Builder().apply {
+                        putString("url", urlString)
+                        putString("filename", "big_buck_bunny.mp4") //  TODO: need to be replaced
+                    }.build()
+                    val worker = OneTimeWorkRequest.Builder(VideoDownloadWorker::class.java)
+                        .setInputData(data)
+                        .build()
+
+                    WorkManager.getInstance().enqueue(worker)
+                    VideoCacheManager.getInstance().putUUID(urlString, worker.id)
+                    WorkManager.getInstance().getWorkInfoByIdLiveData(worker.id).observe(viewLifecycleOwner, Observer {
+
+                        if(it != null ){
+
+                            when(it.state){
+                                WorkInfo.State.SUCCEEDED -> {
+                                    Log.d("badu", "observe by download file finished")
+                                    val returnUrlString = it.outputData.getString("url")!!
+                                    VideoCacheManager.getInstance().removeUUID(returnUrlString)
+                                    recyclerView.adapter!!.notifyDataSetChanged()
+                                }
+                                WorkInfo.State.ENQUEUED,
+                                WorkInfo.State.RUNNING,
+                                WorkInfo.State.BLOCKED -> {
+                                    //  running
+                                    Log.i("badu","running")
+                                }
+                                else -> {
+
+                                }
+                            }
+                        }
+                    })
                 }
             }
         }
