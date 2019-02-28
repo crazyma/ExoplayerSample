@@ -20,7 +20,8 @@ class VideoDownloadWorker(context: Context, workerParams: WorkerParameters) : Wo
         //  TODO: change to constant
         val urlString = inputData.getString("url")!!
         val filename = inputData.getString("filename")!!
-        saveViaOKHttp(urlString, filename)
+//        saveViaOKHttp(urlString, filename)
+        saveVideoFile(urlString, filename)
 
         return Data.Builder()
             .putString("url", urlString)
@@ -71,7 +72,7 @@ class VideoDownloadWorker(context: Context, workerParams: WorkerParameters) : Wo
     }
 
     //  25 ~ 30 sec, 加上 buffer(ByteArray) 就可以加快
-    private fun saveVideoFile() {
+    private fun saveVideoFile(urlString: String, filename: String) {
 
         val directory = File(applicationContext.cacheDir.toString() + "/DcardAdVideo")
         if (directory.exists()) {
@@ -85,12 +86,12 @@ class VideoDownloadWorker(context: Context, workerParams: WorkerParameters) : Wo
             }
         }
 
-        val file = File(directory, "test.mp4")
+        val file = File(directory, filename)
         Log.d("badu", "file: ${file.absolutePath}")
 
 
         try {
-            val inputStream = URL("https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4").run {
+            val inputStream = URL(urlString).run {
                 openStream()
             }
 
@@ -100,8 +101,8 @@ class VideoDownloadWorker(context: Context, workerParams: WorkerParameters) : Wo
             val buffer = ByteArray(1024)
             inputStream.use { input ->
                 outputStream.use {
-                    while (input.read().also { read = it } != -1) {
-                        it.write(read)
+                    while (input.read(buffer).also { read = it } != -1) {
+                        it.write(buffer, 0 ,read)
                     }
                 }
             }
